@@ -4,11 +4,26 @@
     "version": "1.0",
     "manifest_version": 3,
     "permissions": [
-       "activeTab",
-       "scripting"
+      "activeTab", "scripting", "storage"
     ],
-    "action":{},
+    "host_permissions": ["<all_urls>"],
     "background": {
        "service_worker": "background.js"
-    }
+    },
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"],
+        "run_at": "document_end"
+      }
+    ],
+    "web_accessible_resources": [
+      {
+        "resources": ["model/*"],
+        "matches": ["<all_urls>"]
+      }
+    ]
  }

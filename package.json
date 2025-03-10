@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack/webpack.config.js",
+
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,6 +14,8 @@
   "devDependencies": {
     "@types/chrome": "^0.0.197",
     "copy-webpack-plugin": "^11.0.0",
+    "css-loader": "^7.1.2",
+    "mini-css-extract-plugin": "^2.9.2",
     "ts-loader": "^9.4.1",
     "webpack": "^5.74.0",
     "webpack-cli": "^4.10.0"
@@ -22,6 +25,7 @@
     "@paddle-js-models/facedetect": "^3.0.1",
     "@paddle-js-models/gesture": "^3.0.1",
     "@paddle-js-models/humanseg": "^3.0.1",
-    "@paddle-js-models/humanseg_gpu": "^3.0.1"
+    "@paddle-js-models/humanseg_gpu": "^3.0.1",
+    "html-webpack-plugin": "^5.6.3"
   }
 }

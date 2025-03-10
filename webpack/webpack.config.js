@@ -1,10 +1,12 @@
 const path = require('path');
-const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 module.exports = {
    mode: "production",
    entry: {
       background: path.resolve(__dirname, "..", "src", "background.js"),
-      popup: path.resolve(__dirname, "..", "src", "popup/index.js"),
+      popup: path.resolve(__dirname, "..", "src", "popup/popup.js"),
       content: path.resolve(__dirname, "..", "src", "content/index.js"),
    },
    output: {
@@ -17,15 +19,19 @@ module.exports = {
    module: {
       rules: [
          {
-            test: /\.tsx?$/,
-            loader: "ts-loader",
-            exclude: /node_modules/,
-         },
+            test: /\.css$/,
+            use: [MiniCssExtractPlugin.loader, "css-loader"]
+         }
       ],
    },
    plugins: [
-      new CopyPlugin({
-         patterns: [{from: '.', to: '.',context: "public"}]
+      new HtmlWebpackPlugin({
+         filename: "popup.html", // 生成的文件名
+         template: path.resolve(__dirname, "..", "src", "popup", "popup.html"), // 原始 HTML 文件路径
+         chunks: ["popup"] // 只引入 popup.js
       }),
-   ],
+      new MiniCssExtractPlugin({
+         filename: "[name].css", // 生成 popup.css
+      })
+   ]
 };
