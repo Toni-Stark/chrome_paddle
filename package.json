@@ -27,6 +27,7 @@
     "@paddle-js-models/humanseg_gpu": "^3.0.1",
     "@paddlejs-models/ocr": "^1.2.4",
     "@paddlejs-models/ocrdet": "^1.1.1",
+    "@paddlejs/paddlejs-core": "^2.1.0",
     "html-webpack-plugin": "^5.6.3"
   }
 }
