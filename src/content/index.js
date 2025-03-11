@@ -1,7 +1,12 @@
 import {Runner } from "@paddlejs/paddlejs-core";
 import '@paddlejs/paddlejs-backend-webgl';
 // import '@paddlejs/paddlejs-backend-webgpu';
-
+const gl = document.createElement('canvas').getContext('webgl2');
+if (!gl) {
+  console.error('WebGL2 not supported');
+} else {
+  console.log('WebGL2 supported');
+}
 chrome.runtime.onMessage.addListener((message) => {
   if (message.action === "displayResult") {
     alert("Paddle.js 预测结果：" + JSON.stringify(message.result));
@@ -16,11 +21,14 @@ async function loadModels() {
     fill: "#fff",
     mean: [0.485, 0.456, 0.406],
     std: [0.229, 0.224, 0.225],
-    needPreheat: false,  // 禁用预热
-    optimize: false,     // 禁用优化
+    needPreheat: true,
+    optimize: true,     // 禁用优化
   });
+
   console.log("加载 OCR 模型...",detectionRunner);
-  await detectionRunner.init();
+  detectionRunner.init()
+      .then(() => console.log("模型初始化成功"))
+      .catch(err => console.error("模型初始化失败:", err));;
 
   // 创建 OCR 识别模型
   const recognitionRunner = new Runner({
@@ -30,13 +38,15 @@ async function loadModels() {
     fill: "#fff",
     mean: [0.485, 0.456, 0.406],
     std: [0.229, 0.224, 0.225],
-    needPreheat: false,  // 禁用预热
+    needPreheat: true,
     optimize: false,     // 禁用优化
   });
   console.log("加载",detectionRunner);
 
   console.log("OCR 模型加载中...");
-  await recognitionRunner.init();
+  recognitionRunner.init()
+      .then(() => console.log("模型初始化成功"))
+      .catch(err => console.error("模型初始化失败:", err));;;
   console.log("OCR 模型加载完成");
 
   return { detectionRunner, recognitionRunner };
