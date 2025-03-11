@@ -20,9 +20,12 @@
         "run_at": "document_end"
       }
     ],
+    "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data:;"
+    },
     "web_accessible_resources": [
       {
-        "resources": ["model/*", "assets/*"],
+        "resources": ["models/*","models/*/*", "assets/*"],
         "matches": ["<all_urls>"]
       }
     ]

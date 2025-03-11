@@ -22,6 +22,10 @@ module.exports = {
          {
             test: /\.css$/,
             use: [MiniCssExtractPlugin.loader, "css-loader"]
+         },
+         {
+            test: /\.(png|jpe?g|gif)$/i,
+            type: "asset/resource" // Webpack 5 推荐的方式
          }
       ],
    },
@@ -41,5 +45,5 @@ module.exports = {
             { from: path.resolve(__dirname, "..", "src", "assets"), to: "assets" }
          ],
       })
-   ]
+   ],
 };
