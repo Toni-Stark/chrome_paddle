@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-   mode: "production",
+   mode: "development",
    entry: {
       background: path.resolve(__dirname, "..", "src", "background.js"),
       popup: path.resolve(__dirname, "..", "src", "popup/popup.js"),
@@ -13,9 +13,12 @@ module.exports = {
    output: {
       path: path.join(__dirname, "../dist"),
       filename: "[name].js",
+      // publicPath: './',
+      publicPath: 'chrome-extension://__MSG_@@extension_id__/dist/'
    },
+   devtool: 'source-map',
    resolve: {
-      extensions: [".ts", ".js"],
+      extensions: [ ".js"],
    },
    module: {
       rules: [
@@ -33,7 +36,7 @@ module.exports = {
       new HtmlWebpackPlugin({
          filename: "popup.html", // 生成的文件名
          template: path.resolve(__dirname, "..", "src", "popup", "popup.html"), // 原始 HTML 文件路径
-         chunks: ["popup"] // 只引入 popup.js
+         chunks: [""] // 只引入 popup.js
       }),
       new MiniCssExtractPlugin({
          filename: "[name].css", // 生成 popup.css

@@ -1,32 +1,32 @@
 {
-    "name": "Change Theme Extension",
-    "description": "This extension is made for demonstration purposes",
-    "version": "1.0",
-    "manifest_version": 3,
-    "permissions": [
-      "activeTab", "scripting", "storage"
-    ],
-    "host_permissions": ["<all_urls>"],
-    "background": {
-       "service_worker": "background.js"
-    },
-    "action": {
-      "default_popup": "popup.html"
-    },
-    "content_scripts": [
-      {
-        "matches": ["https://*/*", "http://*/*"],
-        "js": ["content.js"],
-        "run_at": "document_end"
-      }
-    ],
-    "content_security_policy": {
-      "extension_pages": "script-src 'self'; object-src 'self'; img-src 'self' data:;"
-    },
-    "web_accessible_resources": [
-      {
-        "resources": ["models/*","models/*/*", "assets/*"],
-        "matches": ["<all_urls>"]
-      }
+  "name": "Change Theme Extension",
+  "description": "This extension is made for demonstration purposes",
+  "version": "1.0",
+  "manifest_version": 2,
+  "permissions": [
+    "activeTab", "storage"
+  ],
+  "background": {
+    "persistent": true,
+    "scripts": [
+      "background.js"
     ]
- }
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "OCR"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*", "http://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+  "web_accessible_resources": [
+    "models/*",
+    "models/*/*",
+    "assets/*"
+  ]
+}
