@@ -4,7 +4,15 @@
   "version": "1.0",
   "manifest_version": 2,
   "permissions": [
-    "activeTab", "storage"
+    "<all_urls>",
+    "scripting",
+    "tabs",
+    "storage",
+    "webRequest",
+    "activeTab",
+    "declarativeNetRequest",
+    "declarativeNetRequestWithHostAccess",
+    "declarativeNetRequestFeedback"
   ],
   "background": {
     "persistent": true,
@@ -12,6 +20,9 @@
       "background.js"
     ]
   },
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "browser_action": {
     "default_popup": "popup.html",
     "default_title": "OCR"
