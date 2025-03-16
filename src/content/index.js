@@ -1,5 +1,6 @@
-// import * as ocrdet from '@paddlejs-models/ocrdet'
-import * as ocrdet from "@paddlejs-models/ocr"
+import * as ocrdet from '@paddlejs-models/ocrdet'
+// import * as ocrdet from "@paddlejs-models/ocr"
+// import * as ocr from '@paddlejs-models/ocr'
 let CON = null;
 let domT = null;
 let domR = null;
@@ -20,9 +21,7 @@ let h = window.innerHeight;
 
 function loadOcrdetModels() {
     try {
-        ocrdet.init();
-
-            // ocrdet.init({ modelPath: chrome.runtime.getURL("models/ocr_detection/") });
+        ocrdet.load({ modelPath: chrome.runtime.getURL("models/ocr_detection/") });
         // ocrdet.load({ modelPath: "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/" });
     } catch (error) {
         console.error("OCR 模型加载失败:", error);
@@ -165,7 +164,7 @@ function getBaseAndUpload(s, e) {
 }
 function processImageBuffer(image) {
     try {
-        ocrdet.recognize(image).then((boxs)=>{
+        ocrdet.detect(image).then((boxs)=>{
             console.log("OCR 目标检测结果:", boxs);
             const texts = [];
             // if(boxs){
@@ -216,7 +215,9 @@ const downLoadImg = (s, e) => {
         );
         let img = canvas.toDataURL('image/png');
         // 提交位置
-        processImageBuffer(canvas)
+        setTimeout(()=>{
+            processImageBuffer(canvas)
+        }, 1000)
     };
 };
 function draw(files) {

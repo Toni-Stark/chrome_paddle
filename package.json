@@ -30,6 +30,7 @@
     "@paddlejs/paddlejs-backend-webgl": "^1.1.4",
     "@paddlejs/paddlejs-backend-webgpu": "^0.0.2-beta.3",
     "@paddlejs/paddlejs-core": "^2.1.7",
-    "html-webpack-plugin": "^5.6.3"
+    "html-webpack-plugin": "^5.6.3",
+    "paddlejs-models-ocr": "^1.2.3"
   }
 }
