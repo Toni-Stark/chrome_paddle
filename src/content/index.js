@@ -1,6 +1,7 @@
-import * as ocrdet from '@paddlejs-models/ocrdet'
-// import * as ocrdet from "@paddlejs-models/ocr"
-// import * as ocr from '@paddlejs-models/ocr'
+// import * as ocrdet from '@paddlejs-models/ocrdet'
+// import * as ocr from "@paddlejs-models/ocr"
+import * as ocr from 'paddlejs-models-ocr'
+console.log(ocr, 'ocring')
 let CON = null;
 let domT = null;
 let domR = null;
@@ -21,7 +22,9 @@ let h = window.innerHeight;
 
 function loadOcrdetModels() {
     try {
-        ocrdet.load({ modelPath: chrome.runtime.getURL("models/ocr_detection/") });
+        ocr.init();
+        // ocr.init("http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/model.json","http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/model.json");
+        // ocrdet.load({ modelPath: chrome.runtime.getURL("models/ocr_detection/") });
         // ocrdet.load({ modelPath: "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/" });
     } catch (error) {
         console.error("OCR 模型加载失败:", error);
@@ -48,9 +51,6 @@ const StartScreenFlash = (element) => {
 
     sendMessageScreenIndex({ topLeft, topRight, bottomRight, bottomLeft });
 };
-
-
-
 const sendMessageScreenIndex = (data) => {
     chrome.runtime.sendMessage({ type: "SCREENSHOT_SHORTCUT", data },(res) => {
         console.log('info-res------------------>');
@@ -60,7 +60,6 @@ const sendMessageScreenIndex = (data) => {
 };
 loadOcrdetModels()
 // loadOCRModel()
-
 function addListener(){
     document.addEventListener("click", function (event) {
         const target = event.target; // 获取点击的元素
@@ -70,7 +69,6 @@ function addListener(){
         }
     });
 }
-
 function captureImage() {
     const img = document.querySelector("img");
     if (!img) {
@@ -162,9 +160,9 @@ function getBaseAndUpload(s, e) {
     if (!drawFiles) return;
     downLoadImg(s, e);
 }
-function processImageBuffer(image) {
+function processImageBuffer(image, canvas) {
     try {
-        ocrdet.detect(image).then((boxs)=>{
+        ocr.recognize(image, {canvas: canvas}).then((boxs)=>{
             console.log("OCR 目标检测结果:", boxs);
             const texts = [];
             // if(boxs){
@@ -215,9 +213,10 @@ const downLoadImg = (s, e) => {
         );
         let img = canvas.toDataURL('image/png');
         // 提交位置
+        document.body.appendChild(Img);
         setTimeout(()=>{
-            processImageBuffer(canvas)
-        }, 1000)
+            processImageBuffer(Img, canvas)
+        }, 2000)
     };
 };
 function draw(files) {
