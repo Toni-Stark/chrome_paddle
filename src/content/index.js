@@ -12,17 +12,15 @@ let poiT = null;
 let poiR = null;
 let poiB = null;
 let poiL = null;
-let CONV = null;
-let mouseEnter = null;
-let start = null;
-let end = null;
 let drawFiles = null;
 let w = window.innerWidth;
 let h = window.innerHeight;
 
 function loadOcrdetModels() {
     try {
-        ocr.init();
+        // ocr.init();
+        ocr.init("http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/model.json","http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/model.json");
+
         // ocr.init("http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/model.json","http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/model.json");
         // ocrdet.load({ modelPath: chrome.runtime.getURL("models/ocr_detection/") });
         // ocrdet.load({ modelPath: "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/" });
