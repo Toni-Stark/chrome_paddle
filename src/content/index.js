@@ -164,7 +164,7 @@ function processImageBuffer(image, canvas) {
         //     const texts = [];
         //     // if(boxs){
         //     //     for (const box of boxs) {
-        ocr.recognize(image, { scaleFactor: 2, batchSize: 4 }).then((text)=> {
+        ocr.recognize(image, { scaleFactor: 5, batchSize: 4 }).then((text)=> {
             console.log("OCR 识别结果:", text);
         })
         //                 // , [
@@ -198,8 +198,8 @@ const downLoadImg = (s, e) => {
         let canvasWidth = (e.x - s.x) * scaleFactor;
         let canvasHeight = (e.y - s.y) * scaleFactor;
 
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
+        canvas.width = iw;
+        canvas.height = ih;
         canvas.style.width = (e.x - s.x) + 'px';
         canvas.style.height = (e.y - s.y) + 'px';
 
@@ -229,13 +229,15 @@ const downLoadImg = (s, e) => {
 };
 function draw(files) {
     let canvas1 = createDom('canvas', 'container_canvas');
-    canvas1.width = w * 2;
-    canvas1.height = h * 2;
+
     canvas1.style.width = w + 'px';
     canvas1.style.height = h + 'px';
     let ctx = canvas1.getContext('2d');
     let img = new Image();
     img.src = files;
+    console.log(img.width, img.height);
+    canvas1.width = w * 2;
+    canvas1.height = h * 2;
     img.onload = function () {
         ctx.drawImage(img, 0, 0, w * 2, h * 2);
     };
