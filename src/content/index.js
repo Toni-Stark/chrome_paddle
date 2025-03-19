@@ -1,7 +1,21 @@
 // import * as ocrdet from '@paddlejs-models/ocrdet'
 // import * as ocr from "@paddlejs-models/ocr"
 import * as ocr from 'paddlejs-models-ocr'
-console.log(ocr, 'ocring')
+// import { Runner } from "@paddlejs/paddlejs-core";
+// import '@paddlejs/paddlejs-backend-webgl';
+console.log("WebGL 版本:", (WebGL2RenderingContext ? 2 : (WebGLRenderingContext ? 1 : "不支持")));
+// const runner = new Runner({
+//     modelPath: "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/", // 本地模型路径
+//     fileCount: 4,
+//     feedShape: { fw: 1, fh: 48 },
+//     backend: "webgl", // 或者 "webgl"
+//     webglVersion: 2
+// });
+// runner.init().then(() => {
+//     console.log("模型加载成功！");
+// }).catch((err) => {
+//     console.error("模型加载失败:", err);
+// });
 let CON = null;
 let domT = null;
 let domR = null;
@@ -18,10 +32,16 @@ let h = window.innerHeight;
 
 function loadOcrdetModels() {
     try {
-        // ocr.init();
-        ocr.init("http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/model.json","http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/model.json");
+        ocr.init().then(() => {
+            console.log("模型加载成功！");
+        }).catch((err) => {
+            console.error("模型加载失败:", err);
+        });
+        // ocr.init(
+        //     "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/model.json",
+        //     "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/model.json"
+        // );
 
-        // ocr.init("http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/model.json","http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_recognition/model.json");
         // ocrdet.load({ modelPath: chrome.runtime.getURL("models/ocr_detection/") });
         // ocrdet.load({ modelPath: "http://icp_p_121_1c30.ldcvh.china-yun.net/modals/ocr_detection/" });
     } catch (error) {
@@ -64,32 +84,6 @@ function addListener(){
         if (target.tagName.toLowerCase() === "img") {
             console.log("点击的元素是 IMG:", target);
             StartScreenFlash(target)
-        }
-    });
-}
-function captureImage() {
-    const img = document.querySelector("img");
-    if (!img) {
-        console.error("未找到图片");
-        return;
-    }
-
-    // 创建 Canvas
-    const canvas = document.createElement("canvas");
-    canvas.width = img.width;
-    canvas.height = img.height;
-    const ctx = canvas.getContext("2d");
-    ctx.drawImage(img, 0, 0, img.width, img.height);
-
-    // 获取 base64 图片数据
-    const dataURL = canvas.toDataURL("image/png");
-
-    // 发送到 background.js
-    chrome.runtime.sendMessage({ action: "processImage", dataURL }, (response) => {
-        if (response && response.success) {
-            console.log("OCR 结果:", response.result);
-        } else {
-            console.error("OCR 处理失败:", response.error);
         }
     });
 }
@@ -160,24 +154,28 @@ function getBaseAndUpload(s, e) {
 }
 function processImageBuffer(image, canvas) {
     try {
-        ocr.recognize(image, {canvas: canvas}).then((boxs)=>{
-            console.log("OCR 目标检测结果:", boxs);
-            const texts = [];
-            // if(boxs){
-            //     for (const box of boxs) {
-            //         ocr.recognize(image).then((text)=> {
-            //             console.log("OCR 识别结果:", text);
-            //         })
-                        // , [
-                        // [4.490625, 190.103125],[11.975, 190.103125],[11.975, 197.5875],[4.490625, 197.5875]
-                    // ]);
-            //         texts.push(text.text);
-            //     }
-            // }
 
-            console.log("OCR 识别结果:", texts);
-            // return boxs;
-        });
+        // runner.predict(image).then((res)=>{
+        //     console.log("OCR 目标检测结果:", res);
+        // });
+
+        // ocr.recognize(image, {canvas: canvas}).then((boxs)=>{
+        //     console.log("OCR 目标检测结果:", boxs);
+        //     const texts = [];
+        //     // if(boxs){
+        //     //     for (const box of boxs) {
+        ocr.recognize(image, { scaleFactor: 2, batchSize: 4 }).then((text)=> {
+            console.log("OCR 识别结果:", text);
+        })
+        //                 // , [
+        //                 // [4.490625, 190.103125],[11.975, 190.103125],[11.975, 197.5875],[4.490625, 197.5875]
+        //             // ]);
+        //     //         texts.push(text.text);
+        //     //     }
+        //     // }
+        //
+        //     // return boxs;
+        // });
     } catch (error) {
         console.error("OCR 目标检测失败:", error);
         return [];
@@ -190,26 +188,38 @@ const downLoadImg = (s, e) => {
     const Img = new Image();
     Img.src = drawFiles;
     Img.onload = () => {
+        let devicePixelRatio = window.devicePixelRatio || 1; // 获取屏幕分辨率比例
+        let scaleFactor = Math.max(devicePixelRatio, 3);
         let iw = w / Img.width;
         let ih = h / Img.height;
+
+        // 设置 canvas 高分辨率
         let canvas = document.createElement('canvas');
-        canvas.width = e.x - s.x;
-        canvas.height = e.y - s.y;
-        canvas.style.width = e.x - s.x + 'px';
-        canvas.style.height = e.y - s.y + 'px';
-        let cth = canvas.getContext('2d');
-        cth.drawImage(
+        let canvasWidth = (e.x - s.x) * scaleFactor;
+        let canvasHeight = (e.y - s.y) * scaleFactor;
+
+        canvas.width = canvasWidth;
+        canvas.height = canvasHeight;
+        canvas.style.width = (e.x - s.x) + 'px';
+        canvas.style.height = (e.y - s.y) + 'px';
+
+        let ctx = canvas.getContext('2d');
+        ctx.scale(scaleFactor, scaleFactor); // 放大画布，避免缩放模糊
+
+        ctx.drawImage(
             Img,
-            s.x / iw,
-            s.y / ih,
-            (e.x - s.x) / iw,
-            (e.y - s.y) / ih,
-            0,
-            0,
-            e.x - s.x,
-            e.y - s.y
+            s.x, s.y, e.x - s.x, e.y - s.y,  // 裁剪的原始图像部分
+            0, 0, (e.x - s.x) * scaleFactor, (e.y - s.y) * scaleFactor // 放大绘制
         );
-        let img = canvas.toDataURL('image/png');
+
+        // 转换为灰度图
+        let imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        let data = imageData.data;
+        for (let i = 0; i < data.length; i += 4) {
+            let avg = (data[i] + data[i + 1] + data[i + 2]) / 3; // 计算灰度
+            data[i] = data[i + 1] = data[i + 2] = avg > 128 ? 255 : 0; // 二值化处理（黑白）
+        }
+        ctx.putImageData(imageData, 0, 0);
         // 提交位置
         document.body.appendChild(Img);
         setTimeout(()=>{
